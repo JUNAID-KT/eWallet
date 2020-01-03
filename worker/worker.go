@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/JUNAID-KT/eWallet/models"
+	se "github.com/JUNAID-KT/eWallet/search_engine"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+// Initialize worker
 func Init() {
-	//var wg sync.WaitGroup
 	var blocks = make(chan *types.Block)
-	//wg.Add(2)
 	go SaveData(blocks)
 	go GetBlocks(blocks)
 	fmt.Println("worker started..................")
-	//wg.Wait()
-	//GetTrans(blocks)
-	//time.Sleep(time.Second * 1000)
 }
+
+// Fetch Ethereum blocks
 func GetBlocks(blocks chan *types.Block) {
 	defer close(blocks)
 	client, err := ethclient.Dial("wss://ropsten.infura.io/ws")
@@ -56,8 +56,26 @@ func GetBlocks(blocks chan *types.Block) {
 	}
 }
 func SaveData(blocks chan *types.Block) {
+	elasticClient := se.GetESInstance()
+	var transaction models.Transaction
+	client, err := ethclient.Dial("https://mainnet.infura.io")
+	if err != nil {
+		log.Fatal(err)
+	}
 	for block := range blocks {
+		transaction.BlockNumber = block.Number().Uint64()
 		for _, tx := range block.Transactions() {
+			transaction.To = tx.To().Hex()
+			transaction.TransactionHash = tx.Hash().Hex()
+			chainID, err := client.NetworkID(context.Background())
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if msg, err := tx.AsMessage(types.NewEIP155Signer(chainID)); err == nil {
+				transaction.From = msg.From().Hex()
+			}
+			elasticClient.SaveTransactions(transaction)
 			fmt.Println("TRANSACTION")
 			fmt.Println(tx.Hash().Hex())        // 0x5d49fcaa394c97ec8a9c3e7bd9e8388d420fb050a52083ca52ff24b3b65bc9c2
 			fmt.Println(tx.Value().String())    // 10000000000000000

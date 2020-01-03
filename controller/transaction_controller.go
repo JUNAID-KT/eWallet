@@ -3,11 +3,36 @@ package controller
 import (
 	"net/http"
 
+	"github.com/JUNAID-KT/eWallet/models"
+	se "github.com/JUNAID-KT/eWallet/search_engine"
 	"github.com/JUNAID-KT/eWallet/util"
 	"github.com/gin-gonic/gin"
 )
 
-func GetTransactions(context *gin.Context) {
+var GetTransactin = "GetTransactions"
 
-	context.JSON(http.StatusOK, util.SetStatus(http.StatusOK, util.SuccessDesc, "resource data fetched"))
+func GetTransactions(context *gin.Context) {
+	var request models.TransactionByUser
+	es := se.GetESInstance()
+	//var transactions []models.Transaction
+	if err := context.ShouldBindJSON(&request); err != nil {
+		util.ErrorResponder(err, GetTransactin, util.FailureDesc, util.BindingFailedMsg, http.StatusBadRequest, context)
+		return
+	}
+	if err := es.Validate.Struct(request); err != nil {
+		util.ErrorResponder(err, GetTransactin, util.FailureDesc, util.ValidationFailedMsg, http.StatusBadRequest, context)
+		return
+	}
+
+	err, transactions := es.GetTransactions(request.User)
+	if err != nil {
+		util.ErrorResponder(err, GetTransactin, util.FailureDesc, err.Error(), http.StatusBadRequest, context)
+		return
+	}
+	context.JSON(http.StatusOK, models.ListTransactionResponse{
+		Status: util.SetStatusResponse(http.StatusOK,
+			http.StatusText(http.StatusOK),
+			"Transactions fetched"),
+		Data: transactions,
+	})
 }

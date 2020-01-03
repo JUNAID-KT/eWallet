@@ -10,4 +10,9 @@ const (
 
 	FailureDesc = "FAILURE"
 	SuccessDesc = "SUCCESS"
+
+	TransactionIndexName = "ethereum_transactions"
+	TransactionTypeName  = "transactions"
+	ValidationFailedMsg  = "Invalid Request"
+	BindingFailedMsg     = "Request binding failed"
 )
