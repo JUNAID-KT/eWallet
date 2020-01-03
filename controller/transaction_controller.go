@@ -11,10 +11,10 @@ import (
 
 var GetTransactin = "GetTransactions"
 
+// Handler for getting transactions
 func GetTransactions(context *gin.Context) {
 	var request models.TransactionByUser
 	es := se.GetESInstance()
-	//var transactions []models.Transaction
 	if err := context.ShouldBindJSON(&request); err != nil {
 		util.ErrorResponder(err, GetTransactin, util.FailureDesc, util.BindingFailedMsg, http.StatusBadRequest, context)
 		return

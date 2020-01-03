@@ -20,14 +20,14 @@ func (es *esEngine) SaveTransactions(doc models.Transaction) error {
 	if err != nil {
 		log.WithFields(log.Fields{"method": "SaveTransactions", "Index Name": util.TransactionIndexName,
 			"error": err.Error()}).
-			Error("error occurred while saving AWS credentials")
+			Error("error occurred while saving transactions")
 		return err
 	}
 
 	return nil
 }
 func (es *esEngine) GetTransactions(user string) (error, []models.Transaction) {
-	deleted := elastic.NewMatchQuery("From", user)
+	deleted := elastic.NewMatchQuery("from", user)
 	generalQuery := elastic.NewBoolQuery().MustNot(deleted)
 	var transactions []models.Transaction
 	searchResult, err := es.Client.Search().
@@ -39,7 +39,7 @@ func (es *esEngine) GetTransactions(user string) (error, []models.Transaction) {
 
 	if err != nil {
 		log.WithFields(log.Fields{"error": err.Error(),
-			"Index Name": util.TransactionIndexName}).Error("error occurred in fetching AWS credentials")
+			"Index Name": util.TransactionIndexName}).Error(err.Error())
 		return err, transactions
 	}
 	if searchResult != nil && searchResult.Hits != nil && searchResult.Hits.TotalHits > 0 {
@@ -49,7 +49,7 @@ func (es *esEngine) GetTransactions(user string) (error, []models.Transaction) {
 			if jsonErr != nil {
 				log.WithFields(log.Fields{"error": jsonErr.Error(),
 					"Index Name": util.TransactionIndexName}).
-					Errorln("error occurred in marshalling AWS credentials data")
+					Errorln(err.Error())
 				return jsonErr, transactions
 			}
 
@@ -58,13 +58,13 @@ func (es *esEngine) GetTransactions(user string) (error, []models.Transaction) {
 			if parseError != nil {
 				log.WithFields(log.Fields{"error": parseError.Error(),
 					"Index Name": util.TransactionIndexName}).
-					Errorln("error occurred in unmarshalling AWS credentials data")
+					Errorln(err.Error())
 				return parseError, transactions
 			}
 
 			transactions = append(transactions, result)
 		}
-		log.Infoln("AWS account information fetched successfully.")
+		log.Infoln("data fetched successfully.")
 	}
 	return nil, transactions
 

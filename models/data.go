@@ -1,11 +1,12 @@
 package models
 
 type Transaction struct {
-	From, To        string
-	BlockNumber     uint64
-	TransactionHash string
+	From            string `json:"from"`
+	To              string `json:"to"`
+	BlockNumber     uint64 `json:"block_number"`
+	TransactionHash string `json:"transaction_hash"`
 }
 type ListTransactionResponse struct {
-	Status StatusResponse
-	Data   []Transaction
+	Status StatusResponse `json:"status_response"`
+	Data   []Transaction  `json:"data"`
 }
