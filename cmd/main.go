@@ -8,6 +8,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/JUNAID-KT/eWallet/worker"
+
 	"github.com/JUNAID-KT/eWallet/app"
 	routing "github.com/JUNAID-KT/eWallet/router"
 	"github.com/JUNAID-KT/eWallet/search_engine"
@@ -15,7 +17,6 @@ import (
 )
 
 func main() {
-
 	app.Init()
 	elasticClient := search_engine.GetESInstance()
 	if elasticClient == nil {
@@ -23,13 +24,14 @@ func main() {
 	} else {
 		defer elasticClient.Stop()
 	}
+
 	router := routing.InitRoutes()
 	// Create the Server
 	server := &http.Server{
 		Addr:    app.Config.Server,
 		Handler: router,
 	}
-
+	worker.Init()
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, os.Kill, syscall.SIGTERM)
 
