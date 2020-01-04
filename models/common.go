@@ -10,5 +10,5 @@ type StatusResponse struct {
 	Description     string `json:"description"`
 }
 type TransactionByUser struct {
-	User string `json:"user"`
+	User string `json:"from"`
 }

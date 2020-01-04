@@ -13,18 +13,14 @@ var GetTransactin = "GetTransactions"
 
 // Handler for getting transactions
 func GetTransactions(context *gin.Context) {
-	var request models.TransactionByUser
-	es := se.GetESInstance()
-	if err := context.ShouldBindJSON(&request); err != nil {
+	var apiRequest models.TransactionByUser
+	if err := context.BindJSON(&apiRequest); err != nil {
 		util.ErrorResponder(err, GetTransactin, util.FailureDesc, util.BindingFailedMsg, http.StatusBadRequest, context)
 		return
 	}
-	if err := es.Validate.Struct(request); err != nil {
-		util.ErrorResponder(err, GetTransactin, util.FailureDesc, util.ValidationFailedMsg, http.StatusBadRequest, context)
-		return
-	}
+	es := se.GetESInstance()
 
-	err, transactions := es.GetTransactions(request.User)
+	err, transactions := es.GetTransactions(apiRequest.User)
 	if err != nil {
 		util.ErrorResponder(err, GetTransactin, util.FailureDesc, err.Error(), http.StatusBadRequest, context)
 		return

@@ -26,46 +26,39 @@ func (es *esEngine) SaveTransactions(doc models.Transaction) error {
 
 	return nil
 }
+
+// Search in DB ; matching a given term, user
 func (es *esEngine) GetTransactions(user string) (error, []models.Transaction) {
-	deleted := elastic.NewMatchQuery("from", user)
-	generalQuery := elastic.NewBoolQuery().MustNot(deleted)
+	// Search with a term query
 	var transactions []models.Transaction
+	termQuery := elastic.NewTermQuery("from.keyword", user)
 	searchResult, err := es.Client.Search().
 		Index(util.TransactionIndexName).
-		Type(util.TransactionTypeName).
-		Query(generalQuery).
-		Size(util.SearchLimit).
+		Query(termQuery).
 		Do(es.Ctx)
-
 	if err != nil {
-		log.WithFields(log.Fields{"error": err.Error(),
-			"Index Name": util.TransactionIndexName}).Error(err.Error())
 		return err, transactions
 	}
-	if searchResult != nil && searchResult.Hits != nil && searchResult.Hits.TotalHits > 0 {
+
+	// searchResult is of type SearchResult and returns hits, suggestions,
+	// and all kinds of other information from Elasticsearch.
+	// Here's how you iterate through results with full control over each step.
+	if searchResult.Hits.TotalHits > 0 {
+		// Iterate through results
 		for _, hit := range searchResult.Hits.Hits {
-			data := *hit.Source
-			jsonData, jsonErr := data.MarshalJSON()
-			if jsonErr != nil {
-				log.WithFields(log.Fields{"error": jsonErr.Error(),
-					"Index Name": util.TransactionIndexName}).
-					Errorln(err.Error())
-				return jsonErr, transactions
+			// hit.Index contains the name of the index
+			var transaction models.Transaction
+			// Deserialize hit.Source into a Transaction
+			err := json.Unmarshal(*hit.Source, &transaction)
+			if err != nil {
+				// Deserialization failed
+				return err, transactions
 			}
-
-			var result models.Transaction
-			parseError := json.Unmarshal(jsonData, &result)
-			if parseError != nil {
-				log.WithFields(log.Fields{"error": parseError.Error(),
-					"Index Name": util.TransactionIndexName}).
-					Errorln(err.Error())
-				return parseError, transactions
-			}
-
-			transactions = append(transactions, result)
+			transactions = append(transactions, transaction)
 		}
-		log.Infoln("data fetched successfully.")
+	} else {
+		// No hits
+		return nil, transactions
 	}
 	return nil, transactions
-
 }

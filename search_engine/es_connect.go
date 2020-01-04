@@ -2,7 +2,6 @@ package search_engine
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"time"
 
@@ -52,7 +51,6 @@ func (es *esEngine) Stop() {
 
 func createInstance() (*esEngine, error) {
 	elasticAddress := app.Config.ElasticAddress
-	fmt.Println(elasticAddress)
 	log.WithFields(log.Fields{"method": "createInstance", "elasticURL": elasticAddress}).
 		Infoln("starting elastic client")
 	instance := new(esEngine)
