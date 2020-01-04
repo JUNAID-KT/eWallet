@@ -30,6 +30,9 @@
 * **Success Response:**
 
   * **Code:** 200 OK 
+    
+    **Content:** 
+
       {
         "status_response": {
             "status_code": 200,
