@@ -14,6 +14,6 @@
 * **Installation**
 
       1. Clone the project
-           git clone https://github.com/dappuniversity/election
+           git clone https://github.com/JUNAID-KT/eWallet
       2. Install. Go to root of the project.
            $make
