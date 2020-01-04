@@ -1,2 +1,17 @@
-# eWallet
-Mobile wallet that users use to make / view transactions on the ethereum blockchain. This wallet queries a backend API to retrieve the transactions for that user.
+**eWallet**
+----
+    
+* **Description**
+    
+       Mobile wallet that users use to make / view transactions on the ethereum blockchain. This wallet queries a backend API to retrieve the transactions for that user.
+
+* **Prerequisite**
+
+      ElasticSearch as database : version 6.X.X
+  
+* **Installation**
+
+      1. Clone the project
+         git clone https://github.com/dappuniversity/election
+      2. Install. Go to root of the project.
+         $make
