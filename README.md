@@ -8,11 +8,12 @@
 * **Prerequisite**
 
       ElasticSearch as database : version 6.X.X
-      [Install ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/install-elasticsearch.html)
+   
+   [Setup ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/install-elasticsearch.html)
   
 * **Installation**
 
       1. Clone the project
-         git clone https://github.com/dappuniversity/election
+           git clone https://github.com/dappuniversity/election
       2. Install. Go to root of the project.
-         $make
+           $make
