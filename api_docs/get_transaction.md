@@ -33,13 +33,13 @@
     
     **Content:** 
 
-      {
-        "status_response": {
-            "status_code": 200,
-            "description_code": "OK",
-            "description": "Transactions fetched"
+        {
+            "status_response": {
+                "status_code": 200,
+                "description_code": "OK",
+                "description": "Transactions fetched"
             },
-        "data": [
+            "data": [
             {
                 "from": "0x1a3F275b9Af71D597219899151140a00***",
                 "to": "0xf4f611dCa7DEa0f3aB706B9af03522200aE7***",
