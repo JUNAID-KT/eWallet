@@ -11,7 +11,7 @@
   
 * **URL**
 
-      /v1.0/eWallet/transaction
+      localhost:8080/v1.0/eWallet/transaction
        
 * **Method:**
 
